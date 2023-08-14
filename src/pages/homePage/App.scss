@@ -1,0 +1,97 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.main-section {
+    display: flex;
+    justify-content: center; /* Center items horizontally */
+    align-items: center;
+    flex-direction: column;
+    .main-div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
+        background-color: rgb(237, 234, 230);
+        border: 2px solid rgb(237, 234, 230);
+        box-sizing: border-box;
+        box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+        padding: 5%;
+        margin: 8%;
+        .title {
+            position: relative;
+            padding: 3%;
+            h2 {
+                color: rgb(57, 57, 163);
+            }
+        }
+    
+        .welcome {
+            position: relative;
+            padding: 3%;
+    
+            h3 {
+                color: #2d333a;
+                font-weight: normal;
+            }
+        }
+    
+        .console-message {
+            position: relative;
+            padding: 1%;
+    
+            h4 {
+                color: #2d333a;
+                font-weight: normal;
+            }
+        }
+    
+        .email {
+            position: relative;
+            padding: 1%;
+    
+            input {
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                width: 300px;
+            }
+        }
+    
+        .password {
+            position: relative;
+            padding: 2%;
+    
+            input {
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                width: 300px;
+            }
+        }
+    
+        .submit-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+    
+        /* Disabled state */
+        .submit-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    }
+}
