@@ -1,6 +1,6 @@
 import './transaction.scss';
 import React, { useEffect, useState } from "react";
-import { apiPostCall, apiGETCall1 } from "../../utilities/siteApi"
+import { apiGETCall1, apiGETCall2 } from "../../utilities/siteApi"
 import { useNavigate } from "react-router";
 import moment from "moment"
 
@@ -10,10 +10,6 @@ import ReactPaginate from "react-paginate";
 
 const TransactionPage = () => {
     const navigate = useNavigate();
-    const [attributes, setAttributes] = useState({
-        email: "",
-        password: ""
-    });
 
     const [selectedOption, setSelectedOption] = useState('option1');
     const [amount, setAmount] = useState();
@@ -22,34 +18,32 @@ const TransactionPage = () => {
     const [to, setTo] = useState();
     const [from, setFrom] = useState();
     const [data, setData] = useState([])
-    const [sort, setSort] = useState( "createdAt = -1" );
+    const [sort, setSort] = useState("createdAt = -1");
 
     const handleOptionChange = (event) => {
         setSelectedOption(event.target.value);
-        if(event.target.value === 'option1') {
-            setSort( "createdAt=-1" );
+        if (event.target.value === 'option1') {
+            setSort("createdAt=-1");
         }
-        if(event.target.value === 'option2') {
-            setSort("createdAt=1" );
+        if (event.target.value === 'option2') {
+            setSort("createdAt=1");
         }
-        if(event.target.value === 'option3') {
-            setSort( "amountSort=1" );
+        if (event.target.value === 'option3') {
+            setSort("amountSort=1");
         }
-        if(event.target.value === 'option4') {
-            setSort( "amountSort=-1" );
+        if (event.target.value === 'option4') {
+            setSort("amountSort=-1");
         }
     };
-
     const temp = localStorage.getItem("userDetails");
     var userDetails = JSON.parse(temp)
-    console.log("userDetails is ", userDetails.data);
-    if (!userDetails) {
-        alert("Please login first!");
-        navigate("/");
-    }
-
+    console.log("userDetails is ", userDetails);
     useEffect(() => {
-        console.log("sort is ", sort);
+        if (!userDetails) {
+            alert("Please login first!");
+            navigate("/");
+            return
+        }
         apiGETCall1(`/transaction?pageNo=1&pageSize=10&${amount && (`amount=${amount}`)}&${srNo && (`srNo=${srNo}`)}&${search && (`search=${search}`)}&${to && (`to=${to}`)}&${from && (`from=${from}`)}&${sort}&`, {}).then((res) => {
             // console.log("data is ", res.data.data);
             setData(res.data.data)
@@ -70,6 +64,28 @@ const TransactionPage = () => {
         })
     }
 
+    const downloadCsv = () => {
+        var response 
+
+        apiGETCall1(`/transaction/csvExport`, {}).then((res) => {
+            console.log("data is ", res.data);
+            response = res.data
+            console.log("ertbnyntyu tbr", response)
+            const blob = new Blob([response], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(new Blob([response]));
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'output.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Clean up the URL object
+            window.URL.revokeObjectURL(url);
+
+            })
+    }
 
     const PER_PAGE = 10;
     const handlePageClick = ({ selected: selectedPage }) => {
@@ -105,8 +121,8 @@ const TransactionPage = () => {
                     <div className='right'>
                         <button onClick={handleStartJob}>Start CronJob</button>
                         <button onClick={handleStopJob}>End CronJob</button>
-                        <button>Download CSV</button>
-                        <h3>Hi, {userDetails?.data?.fullName}</h3>
+                        <button onClick={downloadCsv}>Download CSV</button>
+                        <h3>Hi, {userDetails && userDetails?.data?.fullName}</h3>
                     </div>
                 </section>
 
@@ -118,26 +134,26 @@ const TransactionPage = () => {
                     <div className='date'>
                         <label>From:</label>
                         <input type='date'
-                         placeholder="From"
-                        className="custom-placeholder"
-                        onChange={(e) => setFrom(moment(e.target.value, 'YYYY-MM-DD').utc())}
-                         />
+                            placeholder="From"
+                            className="custom-placeholder"
+                            onChange={(e) => setFrom(moment(e.target.value, 'YYYY-MM-DD').utc())}
+                        />
                     </div>
                     <div className='date'>
                         <label>To:</label>
                         <input type='date'
-                         placeholder="To" 
-                         className="custom-placeholder" 
-                         onChange={(e) => setTo(moment(e.target.value, 'YYYY-MM-DD').utc())}
-                         />
+                            placeholder="To"
+                            className="custom-placeholder"
+                            onChange={(e) => setTo(moment(e.target.value, 'YYYY-MM-DD').utc())}
+                        />
                     </div>
                     <input type='text'
-                     placeholder='Amount'
-                     onChange={(e) => setAmount(e.target.value)}
+                        placeholder='Amount'
+                        onChange={(e) => setAmount(e.target.value)}
                     />
                     <input type='text'
-                     placeholder='User ID'
-                     onChange={(e) => setSrNo(e.target.value)}
+                        placeholder='User ID'
+                        onChange={(e) => setSrNo(e.target.value)}
                     />
                     <select value={selectedOption} onChange={handleOptionChange}>
                         <option value="option1">New to Old</option>
