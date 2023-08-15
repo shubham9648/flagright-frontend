@@ -1,16 +1,16 @@
 import './transaction.scss';
 import React, { useEffect, useState } from "react";
-import { apiGETCall1, apiGETCall2 } from "../../utilities/siteApi"
+import ReactPaginate from "react-paginate";
 import { useNavigate } from "react-router";
 import moment from "moment"
+import { apiGETCall1 } from "../../utilities/siteApi"
 
-
-import ReactPaginate from "react-paginate";
 
 
 const TransactionPage = () => {
     const navigate = useNavigate();
 
+    // UseStates declaration ..
     const [selectedOption, setSelectedOption] = useState('option1');
     const [amount, setAmount] = useState();
     const [srNo, setSrNo] = useState();
@@ -19,6 +19,22 @@ const TransactionPage = () => {
     const [from, setFrom] = useState();
     const [data, setData] = useState([])
     const [sort, setSort] = useState("createdAt = -1");
+
+
+    const temp = localStorage.getItem("userDetails");
+    var userDetails = JSON.parse(temp);
+
+    useEffect(() => {
+        // Checking whether the user logged in or not
+        if (!userDetails) {
+            alert("Please login first!");
+            navigate("/");
+            return
+        }
+        apiGETCall1(`/transaction?pageNo=1&pageSize=10&${amount && (`amount=${amount}`)}&${srNo && (`srNo=${srNo}`)}&${search && (`search=${search}`)}&${to && (`to=${to}`)}&${from && (`from=${from}`)}&${sort}&`, {}).then((res) => {
+            setData(res.data.data)
+        })
+    }, [amount, srNo, search, to, from, selectedOption]);
 
     const handleOptionChange = (event) => {
         setSelectedOption(event.target.value);
@@ -35,20 +51,6 @@ const TransactionPage = () => {
             setSort("amountSort=-1");
         }
     };
-    const temp = localStorage.getItem("userDetails");
-    var userDetails = JSON.parse(temp)
-    console.log("userDetails is ", userDetails);
-    useEffect(() => {
-        if (!userDetails) {
-            alert("Please login first!");
-            navigate("/");
-            return
-        }
-        apiGETCall1(`/transaction?pageNo=1&pageSize=10&${amount && (`amount=${amount}`)}&${srNo && (`srNo=${srNo}`)}&${search && (`search=${search}`)}&${to && (`to=${to}`)}&${from && (`from=${from}`)}&${sort}&`, {}).then((res) => {
-            // console.log("data is ", res.data.data);
-            setData(res.data.data)
-        })
-    }, [amount, srNo, search, to, from, selectedOption]);
 
     const handleStartJob = () => {
         apiGETCall1(`/transaction/startCron`, {}).then((res) => {
@@ -65,7 +67,7 @@ const TransactionPage = () => {
     }
 
     const downloadCsv = () => {
-        var response 
+        var response
 
         apiGETCall1(`/transaction/csvExport`, {}).then((res) => {
             console.log("data is ", res.data);
@@ -73,7 +75,7 @@ const TransactionPage = () => {
             console.log("ertbnyntyu tbr", response)
             const blob = new Blob([response], { type: 'text/csv' });
             const url = window.URL.createObjectURL(new Blob([response]));
-            
+            // generating link ..
             const link = document.createElement('a');
             link.href = url;
             link.download = 'output.csv';
@@ -83,13 +85,12 @@ const TransactionPage = () => {
 
             // Clean up the URL object
             window.URL.revokeObjectURL(url);
-
-            })
+        })
     }
 
+    // To handle Pagination
     const PER_PAGE = 10;
     const handlePageClick = ({ selected: selectedPage }) => {
-        console.log(selectedPage);
         apiGETCall1(`/transaction?pageSize=${PER_PAGE}&pageNo=${selectedPage + 1}&${amount && (`amount=${amount}`)}&${srNo && (`srNo=${srNo}`)}&${search && (`search=${search}`)}&${to && (`to=${to}`)}&${from && (`from=${from}`)}&${sort}$`, {}).then((res) => {
             console.log("data is ", res.data.data);
             setData(res.data.data)
@@ -108,7 +109,8 @@ const TransactionPage = () => {
             <td> {item?.destinationAmountDetails?.currency?.name} </td>
             <td>{moment(item?.createdAt).format("MMM Do YYYY")}</td>
         </tr>
-    ))
+    ));
+
     const pageCount = Math.ceil((((data.totalCount) > 100) ? 100 : data.totalCount) / PER_PAGE);
 
     return (
@@ -208,4 +210,4 @@ const TransactionPage = () => {
     )
 }
 
-export default TransactionPage
+export default TransactionPage;

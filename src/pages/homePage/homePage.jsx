@@ -12,13 +12,13 @@ const LoginPage = () => {
     
     useEffect(() => {
         const userDetails = localStorage.getItem("userDetails");
-
+        // If user already logged in then don't showing him login page ..
         if(userDetails) {
-
+            navigate("/transaction");
+            return;
         }
     }, [])
 
-    console.log("email", attributes);
     const handleLogin = () => {
         if(!attributes.email) {
             alert("Email field is mandatory!");
@@ -44,7 +44,8 @@ const LoginPage = () => {
             }
         })
         console.log(obj);
-    }
+    };
+    
     return (
         <>
             <section className='main-section'>

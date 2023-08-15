@@ -67,11 +67,9 @@ export function apiPutCall(path, params) {
 export function apiGETCall1(path, params) {
   let headers = {};
   const userData = JSON.parse(localStorage.getItem('userDetails'))
-  console.log(userData.Authorization)
   const searchParams = new URLSearchParams();
   Object.keys(params).forEach(key => searchParams.append(key, params[key]));
   let newUrl = `${path}?`+searchParams.toString();
-  console.log("newUrl are", localStorage.getItem('Authorization'));
   return axiosAPI.get(newUrl, { headers: {'Authorization': `Bearer ${userData.Authorization}`} })
     .then((response) => {
       return response
@@ -108,29 +106,6 @@ export function apiGetCall(path, params) {
         return error.request
       } else {
         alert('Network error, Please try again later.' )
-        return error.message
-      }
-    });
-}
-
-export function apiGETCall2(path, params) {
-  let headers = {};
-  const userData = JSON.parse(localStorage.getItem('userDetails'))
-  console.log(userData.Authorization)
-  const searchParams = new URLSearchParams();
-  Object.keys(params).forEach(key => searchParams.append(key, params[key]));
-  let newUrl = `${path}?`+searchParams.toString();
-  console.log("newUrl are", localStorage.getItem('Authorization'));
-  return axiosAPI.get(newUrl, { headers: {'Authorization': `Bearer ${userData.Authorization}`} }, { responseType: 'blob' })
-    .then((response) => {
-      return response
-    })
-    .catch((error) => {
-      if (error.response) {
-        return error.response
-      } else if (error.request) {
-        return error.request
-      } else {
         return error.message
       }
     });
