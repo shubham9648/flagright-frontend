@@ -1,3 +1,3 @@
 export default {
-    apiBaseUrl: 'http://localhost:3004/api/v1'
+    apiBaseUrl: 'https://flagright-test-backend.onrender.com/api/v1'
 }
