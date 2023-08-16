@@ -122,7 +122,7 @@ const TransactionPage = () => {
         </tr>
     ));
 
-    const pageCount = Math.ceil((((data.totalCount) > 100) ? 100 : data.totalCount) / PER_PAGE);
+    const pageCount = Math.ceil((((data.totalCount) > 10000) ? 10000 : data.totalCount) / PER_PAGE);
 
     return (
         <>
