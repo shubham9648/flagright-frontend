@@ -19,6 +19,8 @@ const TransactionPage = () => {
     const [from, setFrom] = useState();
     const [data, setData] = useState([])
     const [sort, setSort] = useState("createdAt = -1");
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [totalTransaction, setTotalTransaction] = useState(0);
 
 
     const temp = localStorage.getItem("userDetails");
@@ -35,6 +37,15 @@ const TransactionPage = () => {
             setData(res.data.data)
         })
     }, [amount, srNo, search, to, from, selectedOption]);
+
+    useEffect(() => {
+        // ?${to && (`to=${to}`)}&${from && (`from=${from}`)}&
+        apiGETCall1(`/transaction/analytics?${to && (`to=${to}`)}&${from && (`from=${from}`)}&`, {}).then((res) => {
+            console.log("asdnerrf", res.data.data);
+            setTotalAmount(res.data.data.totalAmount);
+            setTotalTransaction(res.data.data.totalCount);
+        })
+    }, [from, to]);
 
     const handleOptionChange = (event) => {
         setSelectedOption(event.target.value);
@@ -128,6 +139,23 @@ const TransactionPage = () => {
                     </div>
                 </section>
 
+                <div className="analytics-section">
+                    <table className="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Total Transaction {from ? " from " + moment(from).format("DD/MM/YYYY") : null} {to ? " to " + moment(to).format("DD/MM/YYYY") : null}</th>
+                                <th>Total Amount {from ? " from " + moment(from).format("DD/MM/YYYY") : null} {to ? " to " + moment(to).format("DD/MM/YYYY"): null}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{totalTransaction}</td>
+                                <td>{totalAmount}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <section className='search-component'>
                     <input type='text'
                         placeholder='Search'
@@ -154,7 +182,7 @@ const TransactionPage = () => {
                         onChange={(e) => setAmount(e.target.value)}
                     />
                     <input type='text'
-                        placeholder='User ID'
+                        placeholder='Transaction ID'
                         onChange={(e) => setSrNo(e.target.value)}
                     />
                     <select value={selectedOption} onChange={handleOptionChange}>

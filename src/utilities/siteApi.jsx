@@ -68,7 +68,7 @@ export function apiGETCall1(path, params) {
   let headers = {};
   const userData = JSON.parse(localStorage.getItem('userDetails'))
   const searchParams = new URLSearchParams();
-  Object.keys(params).forEach(key => searchParams.append(key, params[key]));
+  Object.keys(params).length > 0 && Object.keys(params).forEach(key => searchParams.append(key, params[key]));
   let newUrl = `${path}?`+searchParams.toString();
   return axiosAPI.get(newUrl, { headers: {'Authorization': `Bearer ${userData.Authorization}`} })
     .then((response) => {
